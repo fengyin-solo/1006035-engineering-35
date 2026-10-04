@@ -63,6 +63,25 @@
       </tbody>
     </table>
 
+    <section class="todo-panel">
+      <h3>待办清单</h3>
+      <p v-if="!todos.length" class="empty-state">暂无待处理记录</p>
+      <ul v-else class="todo-list">
+        <li v-for="todo in todos" :key="String(todo.id)" class="todo-item">
+          <span class="todo-summary">{{ todo.summary }}</span>
+          <span class="todo-status">{{ todo.status }}</span>
+          <button
+            v-if="todo.nextAction"
+            class="link"
+            type="button"
+            @click="runTodoAction(todo)"
+          >
+            {{ todo.nextAction }}
+          </button>
+        </li>
+      </ul>
+    </section>
+
     <footer class="page-foot">
       <span>共 {{ total }} 条保障资源调度记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
@@ -77,15 +96,22 @@ import {
   downloadEntries,
   listEntries,
   moduleMeta,
+  moduleTodos,
   runAction as applyAction,
 } from '@/api/local-service'
-import type { EntryRow } from '@/data/types'
+import type { EntryRow, TodoItem } from '@/data/types'
 
 const meta = moduleMeta('resplan')
 const columns = ["计划编号", "保障时段", "机位需求", "车辆需求", "人员需求", "资源缺口", "调度人员", "计划状态"]
 const actions = ["提交审核", "下发计划", "作废计划"]
 const statuses = ["待编制", "待审核", "已下发", "已作废"]
-const stats = [{"label": "待编制计划", "value": 0}, {"label": "已下发计划", "value": 0}, {"label": "存在缺口的计划", "value": 0}]
+const summary = ref({ created: 0, pending: 0, abnormal: 0 })
+const todos = ref<TodoItem[]>([])
+const stats = computed(() => [
+  { label: '登记总量', value: summary.value.created },
+  { label: '待处理', value: summary.value.pending },
+  { label: '异常量', value: summary.value.abnormal },
+])
 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
@@ -122,12 +148,19 @@ function runAction(action: string, row: EntryRow) {
   reload()
 }
 
+function runTodoAction(todo: TodoItem) {
+  runAction(todo.nextAction, { id: todo.id } as EntryRow)
+}
+
 function reload() {
   errorMessage.value = ''
   try {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    const todoPayload = moduleTodos(meta.key)
+    summary.value = todoPayload.stats
+    todos.value = todoPayload.todos
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '保障资源调度列表读取失败'
   }

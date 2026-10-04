@@ -1,3 +1,4 @@
+import { MODULE_BY_KEY } from './modules'
 import type { EntryRow } from './types'
 
 // 示例数据：首次打开时播种，之后浏览器里的改动优先，重置才会回到这份。
@@ -795,3 +796,28 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     }
   ],
 }
+
+/**
+ * 归一后的播种数据：与迁移 v1 同一口径——
+ * status 必须在模块状态表内，pending/abnormal 不入库（由状态机派生）。
+ * 持久化层只播种这份，保证全新机器上概览首次统计就与状态机一致。
+ */
+export const NORMALIZED_SEED_ROWS: Record<string, EntryRow[]> = Object.fromEntries(
+  Object.entries(SEED_ROWS).map(([key, rows]) => {
+    const meta = MODULE_BY_KEY.get(key)
+    const normalized = rows.map((raw) => {
+      // 种子生成器仍带着旧布尔位，落库前剥掉；口径见 stats.ts。
+      const { pending: _pending, abnormal: _abnormal, ...rest } =
+        raw as EntryRow & { pending?: unknown; abnormal?: unknown }
+      return rest as EntryRow
+    })
+    if (meta) {
+      for (const row of normalized) {
+        if (!meta.statuses.includes(String(row.status))) {
+          row.status = meta.statuses[0]
+        }
+      }
+    }
+    return [key, normalized]
+  }),
+)

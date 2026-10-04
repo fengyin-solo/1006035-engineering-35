@@ -7,6 +7,48 @@
 结果都持久化在浏览器 `localStorage` 里，刷新或重开浏览器都还在。dev server 已关掉自动打开页面，
 启动后按终端打印的地址手工打开。
 
+## 概览取数链路
+
+数据链路是单向的四个环节，后一环只消费前一环，概览页面本身不算任何业务数：
+
+```text
+模块元数据 modules.ts
+   │  字段 / 状态表 / 动作流转 / abnormalStatuses 的唯一登记处
+   ▼
+本地种子 seed.ts（SEED_ROWS 生成原貌，落库前过 NORMALIZED_SEED_ROWS 归一）
+   │
+   ▼
+持久化层 local-store.ts  ──启动时──▶  migrations.ts（版本信封 { version, rows } + 按模块检查点迁移）
+   │  缺模块读成空数组；JSON 损坏备份现场后按空库处理，不整页报错
+   ▼
+统计口径层 stats.ts（computeModuleStats / listModuleTodos 是全应用唯一的 pending/abnormal 计算入口）
+   │
+   ├──▶ local-service.loadOverview()：四张指标卡 + 按模块统计表
+   └──▶ local-service.moduleTodos()：各模块页待办清单（与概览同一口径）
+```
+
+模块元数据增减模块或状态后，概览表、指标卡、模块待办自动跟随，不用回头改页面；
+存储里多出元数据已删除的遗留模块数据时，它不进统计也不报错，数据仍原样保留在本地。
+
+### 数据口径与迁移裁决
+
+- **以模块元数据的状态机为唯一口径**。记录只持久化 `id / status` 与业务字段；
+  `pending`（待处理）= `status` 不是该模块状态表的最后一个（终态）；
+  `abnormal`（异常量）= `status` 命中元数据显式登记的 `abnormalStatuses`。
+- 旧结构记录上的 `pending / abnormal` 布尔位在 v1 迁移中删除，不再参与统计。
+  裁决依据：状态机是全仓库唯一被显式登记、且状态流转也依赖的事实源；布尔位只是派生缓存，
+  种子数据里它已经和状态机漂移（如「空闲」被标待处理、「占用中」被标异常），
+  留着只会让概览与待办各数一份。业务字段迁移中一律不动。
+- 迁移可重复执行、可断点续跑：按模块推进，每处理完一个模块就同时落数据和检查点
+  （`airport-ground-ops:migration`），中断后重跑从下一个模块继续；变换本身幂等
+  （按 id 去重保留首条、只补缺、删派生位），重跑不产生重复记录、不覆盖用户改动。
+- 无法识别的旧状态不猜含义，归一到该模块状态表第一个状态；损坏的存储内容备份到
+  `airport-ground-ops:entries-corrupt-backup` 后按空库继续。
+
+数据层行为可用 `cd frontend && npm run verify:data` 验证（内存 KV 模拟 localStorage，
+覆盖迁移幂等、断点续跑、容错与概览/待办同口径）。
+
+
 ## 目录结构
 
 ```text
@@ -26,10 +68,13 @@
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev          # 开发
+npm run build        # 类型检查 + 生产构建（dist/）
+npm run verify:data  # 数据层取数/迁移行为验证
 ```
 
 前端默认监听 `http://127.0.0.1:5173/`，dev server 不会自动打开浏览器，需要自己访问。
+也可以在仓库根目录用 `make frontend` / `make build`。
 
 生产构建：
 
@@ -37,6 +82,9 @@ npm run dev
 cd frontend
 npm run build
 ```
+
+构建只产出静态资源到 `frontend/dist/`（已被 `.gitignore` 忽略）；数据只存在于访问者浏览器的
+localStorage，仓库与构建产物中都不含任何本地运行数据。
 
 ## 业务模块
 

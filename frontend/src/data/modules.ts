@@ -34,6 +34,7 @@ export const MODULES: ModuleMeta[] = [
     actions: ["开始靠接", "确认撤离", "登记中止"],
     actionTargets: {"开始靠接": "已靠桥", "确认撤离": "已撤离", "登记中止": "异常中止"},
     metrics: ["今日靠接作业", "待靠桥作业", "异常中止作业"],
+    abnormalStatuses: ["异常中止"],
   },
   {
     key: "shuttle",
@@ -199,6 +200,7 @@ export const MODULES: ModuleMeta[] = [
     actions: ["提交审核", "下发计划", "作废计划"],
     actionTargets: {"提交审核": "待审核", "下发计划": "已下发", "作废计划": "已作废"},
     metrics: ["待编制计划", "已下发计划", "存在缺口的计划"],
+    abnormalStatuses: ["已作废"],
   },
 ]
 

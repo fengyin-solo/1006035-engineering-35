@@ -63,6 +63,25 @@
       </tbody>
     </table>
 
+    <section class="todo-panel">
+      <h3>待办清单</h3>
+      <p v-if="!todos.length" class="empty-state">暂无待处理记录</p>
+      <ul v-else class="todo-list">
+        <li v-for="todo in todos" :key="String(todo.id)" class="todo-item">
+          <span class="todo-summary">{{ todo.summary }}</span>
+          <span class="todo-status">{{ todo.status }}</span>
+          <button
+            v-if="todo.nextAction"
+            class="link"
+            type="button"
+            @click="runTodoAction(todo)"
+          >
+            {{ todo.nextAction }}
+          </button>
+        </li>
+      </ul>
+    </section>
+
     <footer class="page-foot">
       <span>共 {{ total }} 条摆渡车调度记录</span>
       <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
@@ -77,15 +96,22 @@ import {
   downloadEntries,
   listEntries,
   moduleMeta,
+  moduleTodos,
   runAction as applyAction,
 } from '@/api/local-service'
-import type { EntryRow } from '@/data/types'
+import type { EntryRow, TodoItem } from '@/data/types'
 
 const meta = moduleMeta('shuttle')
 const columns = ["车辆编号", "核载人数", "驾驶员", "当前任务", "发车时间", "行驶路线", "里程读数", "车辆状态"]
 const actions = ["派发任务", "确认到站", "申请维保"]
 const statuses = ["待命", "执行中", "充电中", "维保中"]
-const stats = [{"label": "在册摆渡车", "value": 0}, {"label": "执行中车辆", "value": 0}, {"label": "维保中车辆", "value": 0}]
+const summary = ref({ created: 0, pending: 0, abnormal: 0 })
+const todos = ref<TodoItem[]>([])
+const stats = computed(() => [
+  { label: '登记总量', value: summary.value.created },
+  { label: '待处理', value: summary.value.pending },
+  { label: '异常量', value: summary.value.abnormal },
+])
 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
@@ -122,12 +148,19 @@ function runAction(action: string, row: EntryRow) {
   reload()
 }
 
+function runTodoAction(todo: TodoItem) {
+  runAction(todo.nextAction, { id: todo.id } as EntryRow)
+}
+
 function reload() {
   errorMessage.value = ''
   try {
     const payload = listEntries(meta.key, filters.value)
     rows.value = payload.items
     total.value = payload.total
+    const todoPayload = moduleTodos(meta.key)
+    summary.value = todoPayload.stats
+    todos.value = todoPayload.todos
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '摆渡车调度列表读取失败'
   }
