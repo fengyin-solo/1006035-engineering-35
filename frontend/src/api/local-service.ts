@@ -1,6 +1,22 @@
 import { MODULE_BY_KEY } from '@/data/modules'
-import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
-import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
+import { listRows, resetRows, saveRows } from '@/data/local-store'
+import {
+  allModuleStats,
+  isPendingStatus,
+  moduleStats as computeModuleStats,
+  nextActionFor,
+  pendingEntries as selectPendingEntries,
+  toDerivedRow,
+} from '@/data/selectors'
+import type {
+  ActionResult,
+  DerivedEntryRow,
+  EntryRow,
+  ModuleMeta,
+  ModuleStats,
+  OverviewResult,
+  PageResult,
+} from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
 const NEGATIVE_ACTIONS = ['撤销', '作废', '拒绝', '驳回', '停用', '忽略', '下线', '回滚']
@@ -11,6 +27,11 @@ export function moduleMeta(key: string): ModuleMeta {
     throw new Error(`没有登记名为 ${key} 的业务模块`)
   }
   return meta
+}
+
+/** 找不到模块时返回 null，由页面决定显示空态而不是整页报错。 */
+export function findModuleMeta(key: string): ModuleMeta | null {
+  return MODULE_BY_KEY.get(key) ?? null
 }
 
 export function filterRows(rows: EntryRow[], filters: Record<string, string>): EntryRow[] {
@@ -24,7 +45,11 @@ export function filterRows(rows: EntryRow[], filters: Record<string, string>): E
 }
 
 export function listEntries(key: string, filters: Record<string, string> = {}): PageResult {
-  const matched = filterRows(listRows(key), filters)
+  const meta = findModuleMeta(key)
+  if (!meta) {
+    return { items: [], total: 0, page: 1, size: 0 }
+  }
+  const matched = filterRows(listRows(key), filters).map((row) => toDerivedRow(meta, row))
   return { items: matched, total: matched.length, page: 1, size: matched.length }
 }
 
@@ -43,12 +68,12 @@ export function runAction(key: string, id: number, action: string): ActionResult
   if (current === target) {
     return { ok: false, message: `${meta.entity}已经是「${target}」，不用重复操作` }
   }
-  const lastStatus = meta.statuses[meta.statuses.length - 1]
+  const wasAbnormal = rows[index].abnormal === true
   const updated: EntryRow = {
     ...rows[index],
     status: target,
-    pending: target !== lastStatus,
-    abnormal: NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
+    // 异常是负向动作产生的事实：打上后保留，不会被后续正向动作清掉。
+    abnormal: wasAbnormal || NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
   }
   const next = [...rows]
   next[index] = updated
@@ -61,6 +86,17 @@ export function resetModule(key: string): PageResult {
   return listEntries(key)
 }
 
+export function moduleSummary(key: string): ModuleStats | null {
+  const meta = findModuleMeta(key)
+  return meta ? computeModuleStats(meta) : null
+}
+
+export function pendingList(key: string): DerivedEntryRow[] {
+  return selectPendingEntries(key)
+}
+
+export { isPendingStatus, nextActionFor }
+
 export function exportEntries(key: string): { filename: string; content: string } {
   const meta = moduleMeta(key)
   const header = ['编号', ...meta.fields, '当前状态']
@@ -68,7 +104,7 @@ export function exportEntries(key: string): { filename: string; content: string 
   for (const row of listRows(key)) {
     lines.push([row.id, ...meta.fields.map((field) => row[field] ?? ''), row.status].join(','))
   }
-  return { filename: `${meta.name}-清单.csv`, content: `\uFEFF${lines.join('\n')}` }
+  return { filename: `${meta.name}-清单.csv`, content: `﻿${lines.join('\n')}` }
 }
 
 export function downloadEntries(key: string): void {
@@ -85,16 +121,8 @@ export function downloadEntries(key: string): void {
 }
 
 export function loadOverview(): OverviewResult {
-  const rows = allRows()
-  const modules = [...MODULE_BY_KEY.values()].map((meta) => {
-    const entries = rows[meta.key] ?? []
-    return {
-      name: meta.name,
-      created: entries.length,
-      pending: entries.filter((row) => row.pending).length,
-      abnormal: entries.filter((row) => row.abnormal).length,
-    }
-  })
+  // 只迭代模块元数据：元数据增减后统计自动变；存储缺模块由口径层记空，不报错。
+  const modules = allModuleStats()
   const cards = [
     { label: '业务模块', value: modules.length },
     { label: '登记总量', value: modules.reduce((sum, item) => sum + item.created, 0) },

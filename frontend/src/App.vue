@@ -19,9 +19,14 @@
 </template>
 
 <script setup lang="ts">
+import { MODULES } from '@/data/modules'
 import { useSessionStore } from '@/stores/session'
 
 const store = useSessionStore()
 
-const navItems = [{ label: "运营概览", path: "/" }, { label: "航班保障", path: "/flight" }, { label: "机位分配", path: "/stand" }, { label: "廊桥靠接", path: "/bridge" }, { label: "摆渡车调度", path: "/shuttle" }, { label: "行李装卸", path: "/baggage" }, { label: "机务勤务", path: "/line" }, { label: "航油加注", path: "/fueling" }, { label: "除冰作业", path: "/deice" }, { label: "地面电源", path: "/gpu" }, { label: "航空器牵引", path: "/tow" }, { label: "航空配餐", path: "/catering" }, { label: "客舱清洁", path: "/cabin" }, { label: "保障班组", path: "/team" }, { label: "特种车辆维保", path: "/vehmaint" }, { label: "要客保障", path: "/vip" }, { label: "延误处置", path: "/delay" }, { label: "机坪安全巡查", path: "/apron" }, { label: "保障资源调度", path: "/resplan" }]
+// 导航由模块元数据生成，模块增减后自动跟着变，不用回头改页面。
+const navItems = [
+  { label: '运营概览', path: '/' },
+  ...MODULES.map((meta) => ({ label: meta.name, path: `/${meta.key}` })),
+]
 </script>

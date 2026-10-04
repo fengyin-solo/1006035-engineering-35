@@ -6,7 +6,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待接收",
-      "pending": true,
       "abnormal": false,
       "保障编号": "FLIG-0001",
       "航班号": "航班保障样例1",
@@ -20,7 +19,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "保障中",
-      "pending": true,
       "abnormal": true,
       "保障编号": "FLIG-0002",
       "航班号": "航班保障样例2",
@@ -34,7 +32,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "保障完成",
-      "pending": false,
       "abnormal": false,
       "保障编号": "FLIG-0003",
       "航班号": "航班保障样例3",
@@ -50,7 +47,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "空闲",
-      "pending": true,
       "abnormal": false,
       "机位编号": "STAN-0001",
       "机位类型": "机位分配样例1",
@@ -64,7 +60,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "占用中",
-      "pending": true,
       "abnormal": true,
       "机位编号": "STAN-0002",
       "机位类型": "机位分配样例2",
@@ -78,7 +73,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "维护中",
-      "pending": false,
       "abnormal": false,
       "机位编号": "STAN-0003",
       "机位类型": "机位分配样例3",
@@ -94,7 +88,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待靠接",
-      "pending": true,
       "abnormal": false,
       "作业编号": "BRID-0001",
       "廊桥编号": "BRID-0001",
@@ -108,7 +101,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "已靠桥",
-      "pending": true,
       "abnormal": true,
       "作业编号": "BRID-0002",
       "廊桥编号": "BRID-0002",
@@ -122,7 +114,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "已撤离",
-      "pending": false,
       "abnormal": false,
       "作业编号": "BRID-0003",
       "廊桥编号": "BRID-0003",
@@ -138,7 +129,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待命",
-      "pending": true,
       "abnormal": false,
       "车辆编号": "SHUT-0001",
       "核载人数": "摆渡车调度样例1",
@@ -152,7 +142,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "执行中",
-      "pending": true,
       "abnormal": true,
       "车辆编号": "SHUT-0002",
       "核载人数": "摆渡车调度样例2",
@@ -166,7 +155,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "充电中",
-      "pending": false,
       "abnormal": false,
       "车辆编号": "SHUT-0003",
       "核载人数": "摆渡车调度样例3",
@@ -182,7 +170,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待装载",
-      "pending": true,
       "abnormal": false,
       "作业编号": "BAGG-0001",
       "航班号": "行李装卸样例1",
@@ -196,7 +183,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "装载中",
-      "pending": true,
       "abnormal": true,
       "作业编号": "BAGG-0002",
       "航班号": "行李装卸样例2",
@@ -210,7 +196,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待复核",
-      "pending": false,
       "abnormal": false,
       "作业编号": "BAGG-0003",
       "航班号": "行李装卸样例3",
@@ -226,7 +211,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待执行",
-      "pending": true,
       "abnormal": false,
       "任务编号": "LINE-0001",
       "航班号": "机务勤务样例1",
@@ -240,7 +224,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "执行中",
-      "pending": true,
       "abnormal": true,
       "任务编号": "LINE-0002",
       "航班号": "机务勤务样例2",
@@ -254,7 +237,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待放行",
-      "pending": false,
       "abnormal": false,
       "任务编号": "LINE-0003",
       "航班号": "机务勤务样例3",
@@ -270,7 +252,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待加注",
-      "pending": true,
       "abnormal": false,
       "作业编号": "FUEL-0001",
       "航班号": "航油加注样例1",
@@ -284,7 +265,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "加注中",
-      "pending": true,
       "abnormal": true,
       "作业编号": "FUEL-0002",
       "航班号": "航油加注样例2",
@@ -298,7 +278,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待确认",
-      "pending": false,
       "abnormal": false,
       "作业编号": "FUEL-0003",
       "航班号": "航油加注样例3",
@@ -314,7 +293,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待除冰",
-      "pending": true,
       "abnormal": false,
       "任务编号": "DEIC-0001",
       "航班号": "除冰作业样例1",
@@ -328,7 +306,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "除冰中",
-      "pending": true,
       "abnormal": true,
       "任务编号": "DEIC-0002",
       "航班号": "除冰作业样例2",
@@ -342,7 +319,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待确认",
-      "pending": false,
       "abnormal": false,
       "任务编号": "DEIC-0003",
       "航班号": "除冰作业样例3",
@@ -358,7 +334,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待命",
-      "pending": true,
       "abnormal": false,
       "设备编号": "GPU-0001",
       "设备类型": "地面电源样例1",
@@ -372,7 +347,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "供电中",
-      "pending": true,
       "abnormal": true,
       "设备编号": "GPU-0002",
       "设备类型": "地面电源样例2",
@@ -386,7 +360,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待检修",
-      "pending": false,
       "abnormal": false,
       "设备编号": "GPU-0003",
       "设备类型": "地面电源样例3",
@@ -402,7 +375,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待牵引",
-      "pending": true,
       "abnormal": false,
       "任务编号": "TOW-0001",
       "航班号": "航空器牵引样例1",
@@ -416,7 +388,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "牵引中",
-      "pending": true,
       "abnormal": true,
       "任务编号": "TOW-0002",
       "航班号": "航空器牵引样例2",
@@ -430,7 +401,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待确认",
-      "pending": false,
       "abnormal": false,
       "任务编号": "TOW-0003",
       "航班号": "航空器牵引样例3",
@@ -446,7 +416,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待配餐",
-      "pending": true,
       "abnormal": false,
       "作业编号": "CATE-0001",
       "航班号": "航空配餐样例1",
@@ -460,7 +429,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "配送中",
-      "pending": true,
       "abnormal": true,
       "作业编号": "CATE-0002",
       "航班号": "航空配餐样例2",
@@ -474,7 +442,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待交接",
-      "pending": false,
       "abnormal": false,
       "作业编号": "CATE-0003",
       "航班号": "航空配餐样例3",
@@ -490,7 +457,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待清洁",
-      "pending": true,
       "abnormal": false,
       "作业编号": "CABI-0001",
       "航班号": "客舱清洁样例1",
@@ -504,7 +470,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "清洁中",
-      "pending": true,
       "abnormal": true,
       "作业编号": "CABI-0002",
       "航班号": "客舱清洁样例2",
@@ -518,7 +483,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待质检",
-      "pending": false,
       "abnormal": false,
       "作业编号": "CABI-0003",
       "航班号": "客舱清洁样例3",
@@ -534,7 +498,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "在岗",
-      "pending": true,
       "abnormal": false,
       "班组编号": "TEAM-0001",
       "班组名称": "保障班组样例1",
@@ -548,7 +511,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "轮休",
-      "pending": true,
       "abnormal": true,
       "班组编号": "TEAM-0002",
       "班组名称": "保障班组样例2",
@@ -562,7 +524,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "培训中",
-      "pending": false,
       "abnormal": false,
       "班组编号": "TEAM-0003",
       "班组名称": "保障班组样例3",
@@ -578,7 +539,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待进厂",
-      "pending": true,
       "abnormal": false,
       "维保单号": "VEHM-0001",
       "车辆编号": "VEHM-0001",
@@ -592,7 +552,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "维保中",
-      "pending": true,
       "abnormal": true,
       "维保单号": "VEHM-0002",
       "车辆编号": "VEHM-0002",
@@ -606,7 +565,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待验收",
-      "pending": false,
       "abnormal": false,
       "维保单号": "VEHM-0003",
       "车辆编号": "VEHM-0003",
@@ -622,7 +580,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待准备",
-      "pending": true,
       "abnormal": false,
       "保障编号": "VIP-0001",
       "航班号": "要客保障样例1",
@@ -636,7 +593,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "保障中",
-      "pending": true,
       "abnormal": true,
       "保障编号": "VIP-0002",
       "航班号": "要客保障样例2",
@@ -650,7 +606,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待确认",
-      "pending": false,
       "abnormal": false,
       "保障编号": "VIP-0003",
       "航班号": "要客保障样例3",
@@ -666,7 +621,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待处置",
-      "pending": true,
       "abnormal": false,
       "事件编号": "DELA-0001",
       "航班号": "延误处置样例1",
@@ -680,7 +634,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "处置中",
-      "pending": true,
       "abnormal": true,
       "事件编号": "DELA-0002",
       "航班号": "延误处置样例2",
@@ -694,7 +647,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "已恢复",
-      "pending": false,
       "abnormal": false,
       "事件编号": "DELA-0003",
       "航班号": "延误处置样例3",
@@ -710,7 +662,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待巡查",
-      "pending": true,
       "abnormal": false,
       "巡查编号": "APRO-0001",
       "巡查区域": "机坪安全巡查样例1",
@@ -724,7 +675,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "巡查中",
-      "pending": true,
       "abnormal": true,
       "巡查编号": "APRO-0002",
       "巡查区域": "机坪安全巡查样例2",
@@ -738,7 +688,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "待整改",
-      "pending": false,
       "abnormal": false,
       "巡查编号": "APRO-0003",
       "巡查区域": "机坪安全巡查样例3",
@@ -754,7 +703,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 1,
       "status": "待编制",
-      "pending": true,
       "abnormal": false,
       "计划编号": "RESP-0001",
       "保障时段": "2026-09-01",
@@ -768,7 +716,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 2,
       "status": "待审核",
-      "pending": true,
       "abnormal": true,
       "计划编号": "RESP-0002",
       "保障时段": "2026-09-02",
@@ -782,7 +729,6 @@ export const SEED_ROWS: Record<string, EntryRow[]> = {
     {
       "id": 3,
       "status": "已下发",
-      "pending": false,
       "abnormal": false,
       "计划编号": "RESP-0003",
       "保障时段": "2026-09-03",

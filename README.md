@@ -63,9 +63,42 @@ npm run build
 
 ## 约定
 
-- 每个模块的页面在 `frontend/src/views/<模块>/index.vue`，页面只负责渲染，读写统一走
-  `frontend/src/api/local-service.ts`。
+- 每个模块共用一个页面 `frontend/src/views/ModulePage.vue`：路由、导航、页面字段/状态/动作
+  全部由模块元数据生成。在 `frontend/src/data/modules.ts` 增删一条模块，
+  路由、导航、概览统计表、待办清单自动跟着变，不用回头改页面。
+- 页面只负责渲染，读写统一走 `frontend/src/api/local-service.ts`；状态流转只允许在
+  `local-service.ts` 里改，页面组件不做业务判断。
 - 字段、状态、动作与流转目标集中在 `frontend/src/data/modules.ts`；示例数据在
-  `frontend/src/data/seed.ts`。
-- 状态流转只允许在 `local-service.ts` 里改，页面组件不做业务判断。
-- 想回到初始数据：清掉浏览器里 `airport-ground-ops:entries` 这一项，或调用 `resetModule(模块)`。
+  `frontend/src/data/seed.ts`（只在首次打开或显式重置时使用，不参与统计口径）。
+
+### 运营概览取数链路
+
+```
+modules.ts 元数据 ─→ seed.ts 种子（仅首次/重置）─→ local-store 持久化（版本信封+迁移）
+                                          ─→ selectors 唯一口径（总量/待处理/异常）
+                                                ├─→ loadOverview 运营概览
+                                                └─→ ModuleTodos 各模块待办清单
+```
+
+- 持久化结构是带版本号的信封 `{ version, modules, appliedMigrations }`，
+  旧的扁平结构 `{ key: rows }` 在加载时经 `src/data/migrations.ts` 自动升级。
+- 「待处理」由元数据末态（`statuses` 最后一个）实时派生，不读行上的冗余标记；
+  「异常」是负向动作打上的事实标记，迁移时缺失补 `false`、不反推。
+- 缺模块按空模块统计（三项都是 0，不报错）；存储里未知模块的数据保留但不统计。
+- 迁移按模块逐个落盘并登记进度，可重复执行、断点续跑，不会重复造记录或覆盖已有改动。
+  损坏的存储原文会被隔离到 `airport-ground-ops:quarantine:<时间戳>`，不再回退示例数据。
+- 完整的链路说明与迁移裁决依据见 `frontend/docs/data-pipeline.md`。
+- 想回到初始数据：在模块页动作区调用重置（或清除 `airport-ground-ops:entries` 这一项）。
+
+## 校验
+
+```bash
+cd frontend
+npm run typecheck      # 类型检查
+npm run migrate:check  # 迁移幂等/断点续跑/口径一致性（Node 内存假存储，无需浏览器）
+npm run build          # 生产构建
+npm run dev            # 本地开发
+```
+
+构建产物 `dist/` 只含随仓库发布的静态资源与种子常量，不含任何 localStorage 运行数据；
+`.dockerignore` 也排除了本机 `node_modules`、`dist` 与本地环境文件。
